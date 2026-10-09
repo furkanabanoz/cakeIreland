@@ -1,21 +1,42 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
+import { Suspense } from "react";
 
 import { LegalPage } from "@/components/legal-page";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Delivery and Collection",
-  description: "Current CakeIreland delivery and collection options.",
-  alternates: { canonical: "/delivery" },
+  description:
+    "Current CakeIreland delivery and collection options.",
+  alternates: {
+    canonical: "/delivery",
+  },
 };
 
-export default async function DeliveryPage() {
-  await connection();
+export default function DeliveryPage() {
+  return (
+    <Suspense
+      fallback={
+        <LegalPage
+          title="Delivery and collection"
+          intro="Loading current delivery and collection options..."
+          sections={[]}
+        />
+      }
+    >
+      <DeliveryContent />
+    </Suspense>
+  );
+}
 
+async function DeliveryContent() {
   const zones = await prisma.deliveryZone.findMany({
-    where: { active: true },
-    orderBy: { fee: "asc" },
+    where: {
+      active: true,
+    },
+    orderBy: {
+      fee: "asc",
+    },
     select: {
       name: true,
       description: true,
@@ -37,7 +58,9 @@ export default async function DeliveryPage() {
           ],
           bullets: zones.map(
             (zone) =>
-              `${zone.name}${zone.description ? ` — ${zone.description}` : ""} — €${Number(zone.fee).toFixed(2)}`
+              `${zone.name}${
+                zone.description ? ` — ${zone.description}` : ""
+              } — €${Number(zone.fee).toFixed(2)}`
           ),
         },
         {

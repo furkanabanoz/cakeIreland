@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
+import { Suspense } from "react";
 
 import { LegalPage } from "@/components/legal-page";
 import { prisma } from "@/lib/prisma";
@@ -7,15 +7,35 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "Allergens",
   description: "Product allergen information for CakeIreland cakes.",
-  alternates: { canonical: "/allergens" },
+  alternates: {
+    canonical: "/allergens",
+  },
 };
 
-export default async function AllergensPage() {
-  await connection();
+export default function AllergensPage() {
+  return (
+    <Suspense
+      fallback={
+        <LegalPage
+          title="Allergen information"
+          intro="Loading current product allergen information..."
+          sections={[]}
+        />
+      }
+    >
+      <AllergensContent />
+    </Suspense>
+  );
+}
 
+async function AllergensContent() {
   const products = await prisma.product.findMany({
-    where: { published: true },
-    orderBy: { name: "asc" },
+    where: {
+      published: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
     select: {
       name: true,
       allergens: true,
