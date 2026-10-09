@@ -51,3 +51,4 @@ Product images and category hero images can still be entered as URLs. To enable 
 - `CLOUDFLARE_R2_PUBLIC_URL`: HTTPS bucket-domain origin with no path or query parameters (for example, `https://images.example.com`).
 
 The app's authenticated upload endpoint re-checks the user's database role, caps uploads at 5 MB, accepts raster JPEG/PNG/WebP/GIF/AVIF only, and checks the file signature before saving under a random object key. Uploaded images are publicly viewable on the configured domain; do not upload private or sensitive images. Browser-to-R2 CORS is not needed because uploads pass through the authenticated app server. Uploads remain unavailable until valid bucket credentials and a public HTTPS URL are configured. Replacing/removing a URL in product or category content does not delete its old R2 object; configure an R2 lifecycle policy or plan periodic orphan cleanup if storage usage requires it.
+"# cakeIreland" 
